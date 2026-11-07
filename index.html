@@ -291,6 +291,14 @@
         </div>
 
         <div class="field">
+          <div class="flabel"><span>医药费（医疗费）</span><span class="hint">门诊＋住院票据合计，凭票据实</span></div>
+          <div class="inline">
+            <input type="number" id="med" value="0" min="0" step="100" placeholder="0">
+            <span class="unit">元</span>
+          </div>
+        </div>
+
+        <div class="field">
           <div class="flabel"><span>伤残情况</span><span class="hint">未定残可关闭</span></div>
           <div class="switchrow">
             <button class="sw on" id="disSw" role="switch" aria-checked="true" aria-label="是否构成伤残"></button>
@@ -349,19 +357,25 @@
         </div>
 
         <div class="field">
-          <div class="flabel"><span>住院伙食补助标准</span><span class="hint">以当地财政文件为准</span></div>
-          <div class="seg" id="mealStd">
-            <button data-v="100" class="on">100 元/天</button>
-            <button data-v="80">80 元/天</button>
-            <button data-v="60">60 元/天</button>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="flabel"><span>医疗费（选填）</span><span class="hint">凭票据据实，可留空</span></div>
-          <div class="inline">
-            <input type="number" id="med" value="0" min="0" step="100" placeholder="0">
-            <span class="unit">元</span>
+          <div class="flabel"><span>受诉法院所在市</span><span class="hint">决定伙食补助标准</span></div>
+          <select id="citySel" style="width:100%;">
+            <option>西安市（100 元/天）</option>
+            <option>延安市（90 元/天）</option>
+            <option>榆林市（90 元/天）</option>
+            <option>咸阳市（80 元/天）</option>
+            <option>铜川市（80 元/天）</option>
+            <option>宝鸡市（80 元/天）</option>
+            <option>渭南市（80 元/天）</option>
+            <option>汉中市（80 元/天）</option>
+            <option>安康市（80 元/天）</option>
+            <option>商洛市（80 元/天）</option>
+            <option>杨凌示范区（80 元/天）</option>
+            <option>韩城市（80 元/天）</option>
+            <option value="custom">自定义标准…</option>
+          </select>
+          <div class="inline" id="mealCustomBox" style="margin-top:10px;display:none;">
+            <input type="number" id="mealCustom" value="60" min="0" step="5">
+            <span class="unit">元／天（个别基层法院按县级标准酌定）</span>
           </div>
         </div>
 
@@ -419,6 +433,7 @@
         <p style="margin:0 0 6px;">· <a href="https://www.pkulaw.com/chl/8529e2e2a155daf6bdfb.html?way=mcp" target="_blank" rel="noopener">《最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释（2022修正）》〔法释〔2022〕14号〕</a>：第6—17条各项计算规则，第22条"上一年度"＝一审法庭辩论终结时的上一统计年度。</p>
         <p style="margin:0 0 6px;">· <a href="https://www.pkulaw.com/chl/8a1c16433d6b684fbdfb.html?way=mcp" target="_blank" rel="noopener">《最高人民法院关于审理道路交通事故损害赔偿案件适用法律若干问题的解释（二）》〔法释〔2026〕9号，2026年6月30日施行〕</a>：第八条多个被扶养人生活费叠加上限。</p>
         <p style="margin:0 0 6px;">· 《陕西省道路交通事故损害赔偿项目计算标准（试行）》〔陕高法〔2020〕45号〕：营养费 30 元/天、市内交通费 20 元/天、精神损害抚慰金十级 5,000 元逐级递增、多处伤残附加系数规则。</p>
+        <p style="margin:0 0 6px;">· 住院伙食补助费分市标准：陕西省财政厅《省级机关差旅费管理办法》附表二《省级机关省内差旅住宿费和伙食补助费标准表》——<b>西安市 100 元/天，延安市、榆林市 90 元/天，其余各市（区）80 元/天</b>。个别基层法院参照县级机关标准按 60 元/天酌定，可在"自定义标准"中调整。</p>
         <p style="margin:12px 0 6px;"><b>数据来源</b></p>
         <p style="margin:0 0 6px;">· 城镇居民人均可支配收入 49,053 元、人均消费支出 29,807 元：2025 年陕西省国民经济和社会发展统计公报（2026 年 4 月 14 日）；国家统计局陕西调查总队 2026 年 1 月 19 日发布。</p>
         <p style="margin:0 0 6px;">· 分行业平均工资：陕西省统计局 2026 年 6 月 18 日发布《2025 年陕西省私营单位就业人员年平均工资 59,774 元》《2025 年陕西省非私营单位就业人员年平均工资 116,605 元》。</p>
@@ -459,11 +474,20 @@
     }
   };
 
-  var MEAL = 100;        // 住院伙食补助（可切换）
+  var MEAL = 100;        // 住院伙食补助（随市选择，省财政厅附表二标准）
   var NUTRI = 30;        // 营养费日标准
   var TRAVEL = 20;       // 市内交通费日标准
   var CARE_NUM = 1;      // 护理人数
   var HAS_DIS = true;    // 是否构成伤残
+
+  /* 住院伙食补助费分市标准：陕西省财政厅《省级机关差旅费管理办法》附表二 */
+  var CITY_MEAL = {
+    "西安市": 100, "延安市": 90, "榆林市": 90,
+    "咸阳市": 80, "铜川市": 80, "宝鸡市": 80, "渭南市": 80,
+    "汉中市": 80, "安康市": 80, "商洛市": 80, "杨凌示范区": 80, "韩城市": 80
+  };
+  var CITY = "西安市";
+  var CITY_LABEL = "西安市";
 
   var $ = function(id){ return document.getElementById(id); };
 
@@ -577,13 +601,16 @@
     }
 
     // 5 住院伙食补助费
-    if(hospDays > 0){
+    if(hospDays > 0 && MEAL > 0){
       var ma = MEAL * hospDays;
+      var mealTxt = CITY === "custom"
+        ? "自定义 " + MEAL + " 元/天 × " + hospDays + " 天"
+        : MEAL + " 元/天（" + CITY_LABEL + "标准）× " + hospDays + " 天";
       items.push({
         name: "住院伙食补助费",
         amount: ma,
-        calc: MEAL + " 元/天 × " + hospDays + " 天",
-        note: "解释第10条；45号文第8项"
+        calc: mealTxt,
+        note: "解释第10条；45号文第8项；省财政厅附表二"
       });
       sum += ma;
     }
@@ -701,7 +728,26 @@
   }
 
   bindSeg("careNum", function(v){ CARE_NUM = v; });
-  bindSeg("mealStd", function(v){ MEAL = v; });
+
+  $("citySel").addEventListener("change", function(){
+    var v = this.value;
+    if(v === "custom"){
+      CITY = "custom";
+      CITY_LABEL = "自定义";
+      $("mealCustomBox").style.display = "flex";
+      MEAL = num($("mealCustom").value);
+    } else {
+      CITY = v;
+      CITY_LABEL = v.replace(/（.*?）/, "");
+      $("mealCustomBox").style.display = "none";
+      MEAL = CITY_MEAL[CITY_LABEL];
+    }
+    render();
+  });
+  $("mealCustom").addEventListener("input", function(){
+    MEAL = num(this.value);
+    render();
+  });
 
   $("disSw").addEventListener("click", function(){
     HAS_DIS = !HAS_DIS;
