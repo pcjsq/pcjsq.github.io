@@ -26,3 +26,7 @@ GitHub Pages 部署：仓库 Settings → Pages → Branch 选择 `main` / root�
 ## 免责声明
 
 仅供估算与谈判参考，不构成法律意见。三期天数、伤残等级、责任比例等以司法鉴定意见及法院认定为准。
+
+## 在线访问
+
+https://zhupannong-oss.github.io/shaanxi-injury-calculator/
