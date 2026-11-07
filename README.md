@@ -29,4 +29,4 @@ GitHub Pages 部署：仓库 Settings → Pages → Branch 选择 `main` / root�
 
 ## 在线访问
 
-https://zhupannong-oss.github.io/shaanxi-injury-calculator/
+https://pcjsq.github.io/
